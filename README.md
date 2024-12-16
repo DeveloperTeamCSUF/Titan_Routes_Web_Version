@@ -3,7 +3,6 @@
 ## 🚀 **Titan Routes**  
 ### *Navigation Made Easy by the Titan Navigators Team*  
 
-![Titan Routes Web Banner](https://via.placeholder.com/1200x400.png?text=Titan+Routes+Web+Banner)
 
 ---
 
