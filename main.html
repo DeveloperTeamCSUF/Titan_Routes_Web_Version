@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Titan Routes - Home</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png"/>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css"/>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css"/>
+    <link rel="stylesheet" href="styles.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <header>
+        <h1 data-translate="title">Titan Routes</h1>
+        <nav>
+            <button id="home-btn" onclick="location.href='main.html';" data-translate="home">Home</button>
+            <button id="settingsBtn" data-translate="settings">Settings</button>
+            <button id="favoritesBtn" data-translate="favorites">Favorites</button>
+            <button id="newsBtn" onclick="location.href='news.html';" data-translate="news">News</button>
+            <button onclick="location.href='parking.html';" data-translate="parking">Parking</button>
+            <button id="logout-btn" style="display: none;" data-translate="logout">Logout</button>
+            <button id="signin-btn" style="display: none;" data-translate="signin" onclick="location.href='login.html';">Sign In</button>
+        </nav>
+    </header>
+
+    <div id="toolbar">
+        <input type="text" id="searchInput" placeholder="Search CSUF Map..." autocomplete="off" />
+        <button id="clearDropdownBtn" class="icon-button">
+            <i class="fa fa-times"></i>
+        </button>
+        <button id="toggleDirectionsBtn" class="icon-button">
+            <i class="fa fa-map-signs"></i>
+          </button>
+          
+          
+        <div id="dropdownList" style="display: none;"></div>
+    
+    </div>
+
+    <div id="map"></div>
+
+    <div id="favoritesModal">
+        <div class="modal-content">
+            <span id="closeFavorites" style="cursor: pointer; float: right;">&times;</span>
+            <h2>Your Favorites</h2>
+            <ul id="favoritesList"></ul>
+        </div>
+    </div>
+
+    <!-- Mapbox and Firebase Scripts -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="language.js"></script>
+    <script src="settings.js"></script>
+    <script src="voiceGuidance.js"></script>
+    
+
+    <script>
+        // Initialize Language
+        const availableLanguages = ["en", "ar", "es", "ja", "zh"];
+        initializeLanguage("en");
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZo_IHmFK3TAb2WkXPO1tt5-zPjCfnjrM",
+            authDomain: "titan-navigators.firebaseapp.com",
+            projectId: "titan-navigators",
+            storageBucket: "titan-navigators.appspot.com",
+            messagingSenderId: "249769907030",
+            appId: "1:249769907030:web:70ce99a6e64a4648f73cf7",
+            measurementId: "G-X5Q6WSXHXP"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+        const auth = firebase.auth();
+
+        // Mapbox Initialization
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWxpa2hhbGVkIiwiYSI6ImNtMHZqejQyNjFpdmgycm9pZjhpdjZ3M2EifQ.TCysrVw9EIWL71W1_1m1dg';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/alikhaled/cm1ec0kwn02x201q133th82p5',
+            center: [-117.8854, 33.8835],
+            zoom: 14
+
+        });
+        const savedLanguage = localStorage.getItem('language') || 'en';
+
+        const directions = new MapboxDirections({
+            accessToken: mapboxgl.accessToken,
+            unit: 'metric',
+            profile: 'mapbox/walking',
+            alternatives: true,
+            language: savedLanguage,
+            steps: true,
+            marker: false
+        });
+       map.addControl(directions, 'top-left');
+
+               // Listen for language change event
+        document.addEventListener("languageChange", (event) => {
+            const newLanguage = event.detail.language;
+            directions.setLanguage(newLanguage);
+            map.setStyle(`mapbox://styles/mapbox/streets-v11?language=${newLanguage}`);
+        });
+
+       document.getElementById('toggleDirectionsBtn').addEventListener('click', () => {
+        const inputsContainer = document.querySelector('.mapbox-directions-inputs');
+        if (inputsContainer) {
+            if (inputsContainer.style.display === 'none' || inputsContainer.style.display === '') {
+            inputsContainer.style.display = 'block';
+            } else {
+            inputsContainer.style.display = 'none';
+            }
+        }
+    });
+
+
+
+        // Authentication UI Updates
+        auth.onAuthStateChanged((user) => {
+            const logoutBtn = document.getElementById('logout-btn');
+            const signinBtn = document.getElementById('signin-btn');
+            if (user) {
+                if (user.isAnonymous) {
+                    console.log('Guest user is browsing.');
+                    logoutBtn.style.display = 'none';
+                    signinBtn.style.display = 'block';
+                } else {
+                    console.log(`Logged in as ${user.email}`);
+                    logoutBtn.style.display = 'block';
+                    signinBtn.style.display = 'none';
+                    loadUserFavorites();
+                }
+            } else {
+                console.log('No user detected, allowing anonymous browsing.');
+                logoutBtn.style.display = 'none';
+                signinBtn.style.display = 'block';
+                window.favoritesMap = {};
+            }
+        });
+
+        //helper function
+        async function loadUserFavorites() {
+            const user = auth.currentUser;
+            if (!user || user.isAnonymous) return;
+            const userDocRef = db.collection('users').doc(user.uid);
+            const userDoc = await userDocRef.get();
+            if (userDoc.exists && userDoc.data().favorites) {
+                window.favoritesMap = userDoc.data().favorites;
+            } else {
+                window.favoritesMap = {};
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                console.log('User signed out.');
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Sign-out error:', error.message);
+            });
+        });
+
+        // Hide Home button on main page
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop();
+            const homeBtn = document.getElementById('home-btn');
+            if (currentPage === 'main.html') {
+                homeBtn.style.display = 'none';
+            }
+        });
+
+
+//Order matters make sure users location is taken before voice gudance and drop down
+
+        // Set User's Current Location as Origin
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLocation = [position.coords.longitude, position.coords.latitude];
+                directions.setOrigin(userLocation);
+                map.setCenter(userLocation);
+                new mapboxgl.Marker({ color: 'red' })
+                    .setLngLat(userLocation)
+                    .setPopup(new mapboxgl.Popup().setHTML("<h3>Your Location</h3>"))
+                    .addTo(map);
+            },
+            () => alert("Unable to retrieve your location.")
+        );
+
+
+        // Navigation Controls
+        const nav = new mapboxgl.NavigationControl({ visualizePitch: true });
+        map.addControl(nav, 'top-right');
+        const geolocateControl = new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+
+            trackUserLocation: true,
+            showUserHeading: true
+        });
+        map.addControl(geolocateControl, 'top-right');
+        map.on('load', () => geolocateControl.trigger());
+
+        // Locations and Searching
+        let allLocations = [];
+        async function fetchLocations() {
+            try {
+                const querySnapshot = await db.collection('locations').get();
+                allLocations = querySnapshot.docs.map(doc => ({
+                    title: doc.data().title,
+                    lat: doc.data().lat,
+                    lon: doc.data().lon
+                }));
+            } catch (error) {
+                console.error("Error fetching locations:", error);
+            }
+        }
+
+    function displayDropdown(matches) {
+            const dropdownList = document.getElementById('dropdownList');
+            dropdownList.innerHTML = '';
+
+            matches.forEach(location => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+
+                const text = document.createElement('span');
+                text.textContent = location.title;
+                text.onclick = () => {
+                    const coords = [location.lon, location.lat];
+                    directions.setDestination(coords);
+                    dropdownList.style.display = 'none';
+                    document.getElementById('searchInput').value = '';
+                };
+
+                const bookmarkIcon = document.createElement('i');
+                bookmarkIcon.className = 'fa-regular fa-star';
+                bookmarkIcon.style.cursor = 'pointer';
+                bookmarkIcon.style.marginLeft = '10px';
+
+                if (window.favoritesMap && window.favoritesMap[location.title] === true) {
+                    bookmarkIcon.classList.remove('fa-regular');
+                    bookmarkIcon.classList.add('fa-solid');
+                    bookmarkIcon.style.color = '#FFD700';
+                }
+
+                bookmarkIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    saveToFavorites(location).then(() => {
+                        bookmarkIcon.classList.remove('fa-regular');
+                        bookmarkIcon.classList.add('fa-solid');
+                        bookmarkIcon.style.color = '#FFD700';
+                    });
+    };
+
+                item.appendChild(text);
+                item.appendChild(bookmarkIcon);
+                dropdownList.appendChild(item);
+            });
+            dropdownList.style.display = matches.length ? 'block' : 'none';
+        }
+
+        // Hide dropdown list when 'X' button is clicked
+        document.getElementById('clearDropdownBtn').addEventListener('click', () => {
+            const dropdownList = document.getElementById('dropdownList');
+            dropdownList.style.display = 'none';
+
+            // Optionally, clear the search input as well
+            document.getElementById('searchInput').value = '';
+        });
+
+        document.getElementById('searchInput').addEventListener('input', async (e) => {
+            const query = e.target.value.toLowerCase();
+            if (!allLocations.length) await fetchLocations();
+
+            const matches = allLocations.filter(loc => loc.title.toLowerCase().includes(query));
+            displayDropdown(matches);
+        });
+
+
+
+
+
+        // Calculate Distance Between Two Points (Haversine Formula)
+        function calculateDistance(coord1, coord2) {
+            const toRadians = (deg) => (deg * Math.PI) / 180;
+            const [lon1, lat1] = coord1;
+            const [lon2, lat2] = coord2;
+
+            const R = 6371e3; // Radius of Earth in meters
+            const φ1 = toRadians(lat1);
+            const φ2 = toRadians(lat2);
+            const Δφ = toRadians(lat2 - lat1);
+            const Δλ = toRadians(lon2 - lon1);
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // Distance in meters
+        }
+
+
+      // Real-Time Voice Guidance
+      let routeSteps = [];
+        let currentStepIndex = 0;
+        function startRealTimeGuidance(route) {
+            routeSteps = route.legs[0].steps;
+            currentStepIndex = 0;
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    const userLocation = [position.coords.longitude, position.coords.latitude];
+                    if (currentStepIndex < routeSteps.length) {
+                        const nextStep = routeSteps[currentStepIndex];
+                        const distanceToNextStep = calculateDistance(
+                            userLocation,
+                            [nextStep.maneuver.location[0], nextStep.maneuver.location[1]]
+                        );
+                        if (distanceToNextStep < 50) {
+                            window.speakText(nextStep.maneuver.instruction);
+                            currentStepIndex++;
+                        }
+                    }
+                },
+                (error) => console.error('Error watching position:', error),
+                { enableHighAccuracy: true }
+            );
+        }
+
+        directions.on('route', (event) => {
+            if (event.route && event.route.length > 0) {
+                const firstRoute = event.route[0];
+                startRealTimeGuidance(firstRoute);
+                window.speakText('Starting real-time navigation.');
+
+            }
+
+        });
+        
+
+
+        // Show favorites modal on button click
+        document.getElementById('favoritesBtn').addEventListener('click', displayFavorites);
+
+        // Close Favorites Modal
+        document.getElementById('closeFavorites').addEventListener('click', () => {
+            document.getElementById('favoritesModal').style.display = 'none';
+        });
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchLocations();
+        });
+    </script>
+    <script src="voiceGuidance.js"></script>
+    <!-- Favorites Logic in a Separate File -->
+    <script src="favorites.js"></script>
+    <script>
+        // Example: Adding the event listener here, after favorites.js is loaded
+        document.getElementById('favoritesBtn').addEventListener('click', displayFavorites);
+    </script>
+
+    <script>
+        window.__ow = window.__ow || {};
+        window.__ow.organizationId = "84d4fcfc-2186-4832-9479-16bb3671fed1";
+        window.__ow.template_id = "1a4e94a2-2cea-4c6c-9c3d-2bbb00f0e8b7";
+        window.__ow.integration_name = "manual_settings";
+        window.__ow.product_name = "chatbot";   
+        ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[OpenWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.openwidget.com/openwidget.js",t.head.appendChild(n)}};!n.__ow.asyncInit&&e.init(),n.OpenWidget=n.OpenWidget||e}(window,document,[].slice))
+    </script>
+    s`  <noscript>You need to <a href="https://www.chatbot.com/help/chat-widget/enable-javascript-in-your-browser/" rel="noopener nofollow">enable JavaScript</a> in order to use the AI chatbot tool powered by <a href="https://www.chatbot.com/" rel="noopener nofollow" target="_blank">ChatBot</a></noscript>
+    
+
+</body>
+</html>

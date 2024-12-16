@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Routes - Welcome</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png"> 
+    <!-- Font Awesome CDN for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #00274C; /* Navy Blue */
+        }
+        
+
+        /* Onboarding Container */
+        .onboarding-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #00274C;
+            color: #fff;
+            text-align: center;
+        }
+
+        .onboarding-step {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .onboarding-step.active {
+            display: flex;
+        }
+
+        .onboarding-image {
+            width: 60%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .onboarding-text {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .onboarding-controls {
+            margin-top: 20px;
+        }
+
+        .onboarding-controls button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #FF6600; /* Bright Orange */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+
+        .onboarding-controls button:hover {
+            background-color: #cc5200; /* Darker Orange */
+        }
+
+        .onboarding-controls button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <div id="step1" class="onboarding-step active">
+            <img src="/Users/abdulmajedalchekha/Desktop/CSUF WEB/TitanRouteWeb/image.png" alt="Step 1" class="onboarding-image">
+            <div class="onboarding-text">Welcome to Titan Routes! Easily navigate and explore the CSUF campus.</div>
+            <div class="onboarding-controls">
+                <button id="nextBtn1">Next</button>
+            </div>
+        </div>
+
+        <div id="step2" class="onboarding-step">
+            <img src="Screenshot 2024-12-09 at 11.03.19 AM.png" alt="Step 2" class="onboarding-image">
+            <div class="onboarding-text">Explore our multilingual support to enhance your experience in your preferred language.</div>
+            <div class="onboarding-controls">
+                <button id="prevBtn2">Previous</button>
+                <button id="nextBtn2">Next</button>
+            </div>
+        </div>
+
+        <div id="step3" class="onboarding-step">
+            <img src="Screenshot 2024-12-09 at 11.05.57 AM.png" alt="Step 3" class="onboarding-image">
+            <div class="onboarding-text">Need assistance? Use our AI chatbot to find answers and get the best experience!</div>
+            <div class="onboarding-controls">
+                <button id="prevBtn3">Previous</button>
+                <button id="nextBtn3">Next</button>
+            </div>
+        </div>
+
+        <div id="step4" class="onboarding-step">
+            <img src="Screenshot 2024-12-09 at 11.12.18 AM.png" alt="Step 4" class="onboarding-image">
+            <div class="onboarding-text">Save your favorite locations and access them anytime.</div>
+            <div class="onboarding-controls">
+                <button id="prevBtn4">Previous</button>
+                <button id="finishBtn">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.onboarding-step');
+        const nextBtn1 = document.getElementById('nextBtn1');
+        const nextBtn2 = document.getElementById('nextBtn2');
+        const nextBtn3 = document.getElementById('nextBtn3');
+        const prevBtn2 = document.getElementById('prevBtn2');
+        const prevBtn3 = document.getElementById('prevBtn3');
+        const prevBtn4 = document.getElementById('prevBtn4');
+        const finishBtn = document.getElementById('finishBtn');
+
+        nextBtn1.addEventListener('click', () => {
+            steps[0].classList.remove('active');
+            steps[1].classList.add('active');
+        });
+
+        nextBtn2.addEventListener('click', () => {
+            steps[1].classList.remove('active');
+            steps[2].classList.add('active');
+        });
+
+        nextBtn3.addEventListener('click', () => {
+            steps[2].classList.remove('active');
+            steps[3].classList.add('active');
+        });
+
+        prevBtn2.addEventListener('click', () => {
+            steps[1].classList.remove('active');
+            steps[0].classList.add('active');
+        });
+
+        prevBtn3.addEventListener('click', () => {
+            steps[2].classList.remove('active');
+            steps[1].classList.add('active');
+        });
+
+        prevBtn4.addEventListener('click', () => {
+            steps[3].classList.remove('active');
+            steps[2].classList.add('active');
+        });
+
+        finishBtn.addEventListener('click', () => {
+            location.href = 'login.html'; // Redirect to the login page
+        });
+    </script>
+</body>
+</html>

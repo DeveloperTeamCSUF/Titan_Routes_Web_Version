@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Routes - Login</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png">
+    
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pVIcM0X+4vEv0M+QJp1kZ+0p0bkCQrVHCij4RzLr0V1onEwI4vK6oV+qJjUnS/4Xxq1q72iXrjHhJX5H7bjG3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <style>
+        /* General Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+        }
+
+        .form-container {
+            background-color: rgba(30, 58, 138, 0.95);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            color: #fff;
+        }
+
+        .form-container h2 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 70%;
+            padding: 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #fff;
+            color: #000;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 18px;
+        }
+
+        .forgot-password, .form-actions {
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .forgot-password a {
+            color: #fbbf24;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .form-actions span, .form-actions a {
+            color: #fff;
+        }
+
+        .form-actions a {
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .form-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #fbbf24;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #d97706;
+            transform: scale(1.05);
+        }
+
+        .secondary-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .secondary-buttons button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #skip-login-btn {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+
+        #skip-login-btn:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .back-btn:hover {
+            background-color: #bbb;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-container h2 {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .btn-primary {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .secondary-buttons button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+        <div class="form-container">
+            <h2>Login</h2>
+            <div class="form-group">
+                <i class="fa fa-envelope"></i>
+                <input type="email" id="login-email" placeholder="Enter your email" aria-label="Email" required>
+            </div>
+            <div class="form-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" id="login-password" placeholder="Enter your password" aria-label="Password" required>
+            </div>
+            <div class="forgot-password">
+                <a href="#" id="forgot-password-link">Forgot Password?</a>
+            </div>
+            <div class="form-actions">
+                <span>New here?</span> <a href="register.html">Register</a>
+            </div>
+            <button class="btn-primary" id="login-btn">Login</button>
+
+            <!-- Skip Login and Back Buttons -->
+            <div class="secondary-buttons">
+                <button id="skip-login-btn" onclick="location.href='main.html'">Skip Login</button>
+                <!-- Uncomment the line below if you want a Back button -->
+                <!-- <button class="back-btn" onclick="history.back()">Back</button> -->
+            </div>
+        </div>
+    </div>ill
+
+    <!-- Firebase Initialization and Authentication Scripts -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZo_IHmFK3TAb2WkXPO1tt5-zPjCfnjrM",
+            authDomain: "titan-navigators.firebaseapp.com",
+            databaseURL: "https://titan-navigators-default-rtdb.firebaseio.com",
+            projectId: "titan-navigators",
+            storageBucket: "titan-navigators.appspot.com",
+            messagingSenderId: "249769907030",
+            appId: "1:249769907030:web:70ce99a6e64a4648f73cf7",
+            measurementId: "G-X5Q6WSXHXP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Handle Login Button Click
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // Validate input
+            if (!email || !password) {
+                alert('Please enter both email and password.');
+                return;
+            }
+
+            // Sign in with Firebase Authentication
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    console.log(`Welcome back, ${user.email}!`);
+                    // Redirect to main page
+                    window.location.href = 'main.html';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(`Error (${errorCode}): ${errorMessage}`);
+                });
+        });
+
+    document.getElementById('skip-login-btn').addEventListener('click', function () {
+    auth.signInAnonymously()
+        .then((userCredential) => {
+            console.log('Anonymous login successful.');
+            const user = userCredential.user;
+
+            // Save a flag in localStorage (optional for additional client-side checks)
+            localStorage.setItem('loginSkipped', 'true');
+            localStorage.setItem('guestUID', user.uid);
+
+            // Optionally save guest info to Firestore
+            const db = firebase.firestore();
+            return db.collection('users').doc(user.uid).set({
+                isGuest: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        })
+        .then(() => {
+            // Display a message
+            alert('You are browsing as a guest. Some features may be limited.');
+            // Redirect to main.html
+            window.location.href = 'main.html';
+        })
+        .catch((error) => {
+            console.error('Error during anonymous login:', error.message);
+            alert('Unable to proceed as a guest. Please try again.');
+        });
+});
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+    auth.currentUser.delete()
+        .then(() => {
+            console.log('Anonymous user deleted.');
+            localStorage.removeItem('loginSkipped');
+            window.location.href = 'login.html';
+        })
+        .catch((error) => {
+            console.error('Error deleting anonymous user:', error.message);
+        });
+});
+
+
+
+        // Handle Forgot Password Link Click
+        document.getElementById('forgot-password-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            if (!email) {
+                alert('Please enter your email address to reset your password.');
+                return;
+            }
+
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    alert('Password reset email sent! Check your inbox.');
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(`Error (${errorCode}): ${errorMessage}`);
+                });
+        });
+    </script>
+
+</body>
+</html>

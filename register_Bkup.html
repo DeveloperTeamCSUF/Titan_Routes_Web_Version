@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Routes - Register</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png">
+    <!-- Font Awesome CDN for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-pO8f+UBhV+AzX0QxgxPwM44iIcqjdWkbfInr1n27Fj5Ml9IkKcJZnCl0RvkxAzlFQ9CIuL4Zk5QQeC3xz8+3qw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Register Screen -->
+    <div id="register-screen" class="screen active">
+        <div class="form-container">
+            <h2>Register</h2>
+            <div class="form-group">
+                <label for="register-fullname">Full Name</label>
+                <input type="text" id="register-fullname" placeholder="Enter your full name" aria-label="Full Name" required>
+            </div>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email" aria-label="Email" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Create a password" aria-label="Password" required>
+            </div>
+            <div class="form-actions">
+                <span>Already a member?</span> <a class="link" href="login.html">Login</a>
+            </div>
+            <button class="btn-primary" id="register-btn">Register</button>
+
+            <div class="social-buttons">
+                <button class="social-button google-btn" aria-label="Register with Google" onclick="alert('Google authentication is not implemented.')">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button class="social-button facebook-btn" aria-label="Register with Facebook" onclick="alert('Facebook authentication is not implemented.')">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+                <button class="social-button apple-btn" aria-label="Register with Apple" onclick="alert('Apple authentication is not implemented.')">
+                    <i class="fab fa-apple"></i>
+                </button>
+            </div>
+
+            <button class="back-btn" onclick="location.href='login.html'">Back</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDZo_IHmFK3TAb2WkXPO1tt5-zPjCfnjrM",
+        authDomain: "titan-navigators.firebaseapp.com",
+        databaseURL: "https://titan-navigators-default-rtdb.firebaseio.com",
+        projectId: "titan-navigators",
+        storageBucket: "titan-navigators.appspot.com",
+        messagingSenderId: "249769907030",
+        appId: "1:249769907030:web:70ce99a6e64a4648f73cf7",
+        measurementId: "G-X5Q6WSXHXP"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const analytics = firebase.getAnalytics(firebase.app());
+      const auth = firebase.auth();
+    </script>
+
+    <!-- Firebase Authentication Script -->
+    <script>
+        // Handle Register Button Click
+        document.getElementById('register-btn').addEventListener('click', function() {
+            const fullname = document.getElementById('register-fullname').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            // Validate input
+            if (!fullname || !email || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Create user with Firebase Authentication
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Registered
+                    const user = userCredential.user;
+                    alert(`Welcome, ${fullname}! Your account has been created.`);
+                    // Redirect to main page or dashboard
+                    window.location.href = 'main.html';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(`Error (${errorCode}): ${errorMessage}`);
+                });
+        });
+    </script>
+
+</body>
+</html>

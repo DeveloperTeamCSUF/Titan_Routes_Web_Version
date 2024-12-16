@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Parking Spaces</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png">
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --hover-primary: #0056b3;
+            --white: #ffffff;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: #0073e6;
+            color: #fff;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+        /* Navbar */
+        nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        nav button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+        }
+
+        nav button:hover {
+            background-color: var(--hover-primary);
+            transform: scale(1.05);
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        nav button:active {
+            transform: scale(0.95);
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px; /* Adjusted for fixed header */
+            padding: 20px;
+        }
+
+        iframe {
+            width: 90%;
+            height: 800px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            nav button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+
+            iframe {
+                height: 600px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Live Parking Spaces</h1>
+        <nav>
+            <button onclick="location.href='main.html';">Home</button>
+            <button onclick="location.href='news.html';">News</button>
+        </nav>
+    </header>
+
+    <div id="iframe-container">
+        <iframe id="parkingIframe" src="https://parking.fullerton.edu/ParkingLotCounts/mobile.aspx" title="Live Parking Spaces"></iframe>
+    </div>
+
+    <script>
+        const refreshInterval = 10 * 1000;
+        const iframe = document.getElementById('parkingIframe');
+
+        setInterval(() => {
+            iframe.src = iframe.src;
+        }, refreshInterval);
+    </script>
+</body>
+
+</html>

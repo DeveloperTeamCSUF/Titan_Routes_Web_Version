@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Routes - Register</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png">
+    
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome CDN for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-pVIcM0X+4vEv0M+QJp1kZ+0p0bkCQrVHCij4RzLr0V1onEwI4vK6oV+qJjUnS/4Xxq1q72iXrjHhJX5H7bjG3g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        /* General Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+        }
+
+        .form-container {
+            background-color: rgba(30, 58, 138, 0.95);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            color: #fff;
+        }
+
+        .form-container h2 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+            width: 80%;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 40px; /* Adjusted for icon space */
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #fff;
+            color: #000;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 18px;
+        }
+
+        .form-actions {
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-actions a {
+            color: #fbbf24; /* Orange link color */
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 5px;
+            transition: color 0.3s;
+        }
+
+        .form-actions a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff; /* White text */
+            background-color: #fbbf24; /* Orange button color */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .btn-primary:hover {
+            background-color: #d97706; /* Darker orange on hover */
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px; /* Adjust this value for desired space */
+    font-size: 16px;
+    color: #fff; /* White text */
+    background-color: #3b82f6; 
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin: 10px auto 0; /* Updated to add space above the Back button */
+    display: block;
+}
+
+
+        .back-btn:hover {
+            background-color: #2563eb; 
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-container h2 {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .btn-primary {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .back-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .form-group input {
+                padding: 10px 35px;
+            }
+
+            .form-group i {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Register Screen -->
+    <div class="form-container">
+        <h2>Register</h2>
+        <div class="form-group">
+            <i class="fa fa-user"></i>
+            <input type="text" id="register-fullname" placeholder="Enter your full name" aria-label="Full Name" required>
+        </div>
+        <div class="form-group">
+            <i class="fa fa-envelope"></i>
+            <input type="email" id="register-email" placeholder="Enter your email" aria-label="Email" required>
+        </div>
+        <div class="form-group">
+            <i class="fa fa-lock"></i>
+            <input type="password" id="register-password" placeholder="Create a password" aria-label="Password" required>
+        </div>
+        <div class="form-actions">
+            <span>Already a member?</span> <a href="login.html">Login</a>
+        </div>
+        <button class="btn-primary" id="register-btn">Register</button>
+
+        <!-- Back Button -->
+        <button class="back-btn" onclick="location.href='login.html'">Back</button>
+    </div>
+
+    <!-- Firebase Initialization Script -->
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDZo_IHmFK3TAb2WkXPO1tt5-zPjCfnjrM",
+        authDomain: "titan-navigators.firebaseapp.com",
+        databaseURL: "https://titan-navigators-default-rtdb.firebaseio.com",
+        projectId: "titan-navigators",
+        storageBucket: "titan-navigators.appspot.com",
+        messagingSenderId: "249769907030",
+        appId: "1:249769907030:web:70ce99a6e64a4648f73cf7",
+        measurementId: "G-X5Q6WSXHXP"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const analytics = firebase.analytics();
+      const auth = firebase.auth();
+      const db = firebase.firestore(); // Initialize Firestore
+    </script>
+
+    <!-- Firebase Authentication Script -->
+    <script>
+        // Handle Register Button Click
+        document.getElementById('register-btn').addEventListener('click', function() {
+            const fullname = document.getElementById('register-fullname').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+
+            // Validate input
+            if (!fullname || !email || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Create user with Firebase Authentication
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Save additional user data in Firestore
+                    return db.collection("users").doc(user.uid).set({
+                        fullname: fullname, // Save user's full name
+                        email: email,       // Save user's email
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    alert(`Welcome, ${fullname}! Your account has been created.`);
+                    // Redirect to main page or dashboard
+                    window.location.href = 'main.html';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(`Error: ${errorMessage}`);
+                });
+        });
+    </script>
+</body>
+</html>

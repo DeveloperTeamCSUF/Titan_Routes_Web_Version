@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan News</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" sizes="16x16" href="image.png">
+    <style>
+        /* General Styles */
+        html, body {
+            height: 100%; /* Ensure the page uses full height */
+            margin: 0;
+            padding: 0;
+            overflow-y: auto; /* Allow scrolling */
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #0073e6;
+            color: #fff;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Navbar Buttons */
+nav {
+    display: flex;
+    gap: 10px;
+}
+
+nav button {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color)); /* Matches the navbar color */
+    border: none;
+    color: var(--white);
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+nav button:hover {
+    background: linear-gradient(135deg, var(--hover-primary), var(--hover-primary)); /* Slightly darker on hover */
+    transform: scale(1.05);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+nav button:active {
+    transform: scale(0.95);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+        /* Section */
+        #newsSection {
+            flex: 1; /* Allow the section to take remaining space */
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        #newsSection h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #005bb5;
+            font-size: 28px;
+        }
+
+        #newsContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-article {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .news-article:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .news-article h3 {
+            margin-top: 0;
+            color: #0073e6;
+        }
+
+        .news-article p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .news-article a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #0073e6;
+            font-weight: bold;
+        }
+
+        .news-article a:hover {
+            text-decoration: underline;
+        }
+
+        .news-article small {
+            display: block;
+            margin-top: 10px;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Titan News</h1>
+        <nav>
+            <button onclick="location.href='main.html';">Home</button>
+            <button onclick="location.href='parking.html';">Parking</button>
+        </nav>
+    </header>
+
+
+    <section id="newsSection"><br><br>
+        <h2>Latest News</h2>
+        <div id="newsContainer">
+            <!-- News articles will be dynamically loaded here -->
+        </div>
+    </section>
+
+    <script src="news.js"></script>
+    <script>
+        // Load news articles when the page is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderNews === 'function') {
+                renderNews();
+            } else {
+                console.error('renderNews function is not defined.');
+            }
+        });
+    </script>
+</body>
+
+</html>
